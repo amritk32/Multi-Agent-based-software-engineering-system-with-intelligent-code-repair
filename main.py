@@ -1,4 +1,4 @@
-from module1 import Agents
+from agents import Agents
 from mod1_workflow import Module1Workflow
 from langchain_ollama import ChatOllama
 
@@ -28,6 +28,16 @@ def main():
     print(result)
     print("\n========== FINAL RESULT ==========\n")
     print(result["code"])
+    print("\nGenerated Test Cases\n")
+    test_cases = agents.generate_test_cases(
+        requirements=result["requirements"],
+        architecture=result["architecture"],
+        boilerplate=result["boilerplate"],
+        generated_code=result["code"],
+    )
+
+    for test in test_cases:
+        print(test)
 
 
 if __name__ == "__main__":

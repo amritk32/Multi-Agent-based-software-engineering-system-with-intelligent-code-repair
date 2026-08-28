@@ -1,4 +1,4 @@
-from module1 import Agents, Module1
+from agents import Agents, Module1
 from langgraph.graph import StateGraph, START, END
 
 MAX_CODE_REPAIR = 3
