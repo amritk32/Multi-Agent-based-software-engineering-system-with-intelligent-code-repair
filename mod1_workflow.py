@@ -28,6 +28,8 @@ class Module1Workflow:
             state.requirements,
             state.architecture,
         )
+
+        print("Boilerplate node ended")
         return state
 
     def code_writing_node(self, state: Module1):
@@ -71,6 +73,26 @@ class Module1Workflow:
 
         state.review_result = result
         state.report = result.summary
+
+        return state
+
+    def generate_test_cases_node(self, state: Module1):
+        print("➡️ Generate Test Cases Node")
+
+        result = self.agents.generate_test_cases(
+            requirements=state.requirements,
+            architecture=state.architecture,
+            boilerplate=state.boilerplate,
+            generated_code=state.code,
+        )
+
+        print("Test cases generated.")
+
+        print("\nNumber of test cases ", len(result))
+
+        state.test_cases = result
+
+        print("Test cases stored in state.")
 
         return state
 
@@ -127,8 +149,8 @@ class Module1Workflow:
         )
 
         workflow.add_node(
-            "testing",
-            self.testing_node,
+            "generate_test_cases",
+            self.generate_test_cases_node,
         )
 
         workflow.add_edge(START, "requirements")
@@ -153,27 +175,11 @@ class Module1Workflow:
             "review",
         )
 
-        workflow.add_conditional_edges(
+        workflow.add_edge(
             "review",
-            self.review_router,
-            {
-                "code_writing": "code_writing",
-                "testing": "testing",
-            },
+            "generate_test_cases",
         )
 
-        workflow.add_conditional_edges(
-            "testing",
-            self.testing_router,
-            {
-                "end": END,
-                "CODE": "code_writing",
-                "BOILERPLATE": "boilerplate",
-                "ARCHITECTURE": "architecture",
-                "TEST": "testing",
-                "ENVIRONMENT": "testing",
-                "UNKNOWN": "code_writing",
-            },
-        )
+        workflow.add_edge("generate_test_cases", END)
 
         return workflow.compile()

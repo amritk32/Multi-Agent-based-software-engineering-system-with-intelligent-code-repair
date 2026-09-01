@@ -1,11 +1,15 @@
 # from langchain_openai import ChatOllama
-from langchain_ollama import ChatOllama
-from api import OPENAI_API_KEY
+from langchain_openai import ChatOpenAI
 from pydantic import BaseModel
+from aapi import OPEN_AI_API
 from langchain_core.messages import HumanMessage, SystemMessage
 from schemas import *
 
-LLM = ChatOllama(model="qwen2.5:3b", temperature=0)
+LLM = ChatOpenAI(
+    model="gpt-5-mini",
+    temperature=0,
+    # api_key=OPEN_AI_API,
+)
 
 
 class Agents:
@@ -219,7 +223,7 @@ Important rules:
 Return a structured TestingResult.
 """
 
-    def __init__(self, llm: ChatOllama) -> None:
+    def __init__(self, llm: ChatOpenAI) -> None:
         """Initialize agents with one reusable, injected LLM instance."""
         self.llm = llm
 
@@ -280,24 +284,24 @@ Return a structured TestingResult.
             ReviewResult,
         )
 
-    def testing_agent(
-        self,
-        requirements: str,
-        architecture: str,
-        generated_code: str,
-    ) -> TestingResult:
+    # def testing_agent(
+    #     self,
+    #     requirements: str,
+    #     architecture: str,
+    #     generated_code: str,
+    # ) -> TestingResult:
 
-        prompt = (
-            f"Requirements:\n{requirements}\n\n"
-            f"Architecture:\n{architecture}\n\n"
-            f"Generated code:\n{generated_code}"
-        )
+    #     prompt = (
+    #         f"Requirements:\n{requirements}\n\n"
+    #         f"Architecture:\n{architecture}\n\n"
+    #         f"Generated code:\n{generated_code}"
+    #     )
 
-        return self._invoke_structured(
-            self.TESTING_SYSTEM_PROMPT,
-            prompt,
-            TestingResult,
-        )
+    #     return self._invoke_structured(
+    #         self.TESTING_SYSTEM_PROMPT,
+    #         prompt,
+    #         TestingResult,
+    #     )
 
     def generate_test_cases(
         self,
@@ -307,6 +311,8 @@ Return a structured TestingResult.
         generated_code: str,
     ) -> list[TestCase]:
 
+        print("🧪 Generate Test Cases: started")
+
         prompt = (
             f"Requirements:\n{requirements}\n\n"
             f"Architecture:\n{architecture}\n\n"
@@ -314,7 +320,11 @@ Return a structured TestingResult.
             f"Generated code:\n{generated_code}"
         )
 
+        print("🧪 Prompt prepared")
+
         structured_llm = self.llm.with_structured_output(TestCaseList)
+
+        print("🧪 Calling Qwen for structured test cases...")
 
         result = structured_llm.invoke(
             [
@@ -322,6 +332,8 @@ Return a structured TestingResult.
                 HumanMessage(content=prompt),
             ]
         )
+
+        print("✅ Qwen returned structured test cases")
 
         return result.test_cases
 
@@ -367,8 +379,9 @@ Return a structured TestingResult.
 
 
 agents = Agents(
-    llm=ChatOllama(
-        model="gpt-4o",
+    llm=ChatOpenAI(
+        model="gpt-5-mini",
         temperature=0,
+        # api_key=OPEN_AI_API,
     )
 )

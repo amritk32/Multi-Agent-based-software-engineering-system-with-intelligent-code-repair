@@ -61,6 +61,7 @@ class Module1(BaseModel):
     boilerplate: str = ""
     code: str = ""
     report: str = ""
+    test_cases: list[TestCase] = Field(default_factory=list)
     review_result: ReviewResult | None = None
     test_result: TestingResult | None = None
 
