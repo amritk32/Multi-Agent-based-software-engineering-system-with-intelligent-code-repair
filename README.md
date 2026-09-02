@@ -114,12 +114,3 @@ npm run dev       # Development server
 npm run build     # TypeScript check and production build
 npm run preview   # Preview the production build
 ```
-
-## GitHub upload
-
-Upload the complete `krishna-code-ai-stack` folder, including `backend/`, `frontend/`, scripts, and this README. Do not upload `.venv/`, `backend/venv/`, `frontend/node_modules/`, `frontend/dist/`, `.env` files, cache files, or API keys.
-- code_chunk
-- artifact_updated
-- test_case_created
-- workflow_completed
-- workflow_error
